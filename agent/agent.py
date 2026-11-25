@@ -5,6 +5,7 @@ import psutil
 import requests
 
 URL_SERVEUR = "http://127.0.0.1:8000/mesures"
+AFFICHER_DONNEES = True  # false for short data
 
 def top_processus(n=10):
     # first pass: initialize cpu measurement
@@ -59,6 +60,8 @@ while True:
         donnees = collecter()
         reponse = requests.post(URL_SERVEUR, json=donnees, timeout=5)
         print("Envoi :", reponse.status_code)
+        if AFFICHER_DONNEES:
+            print(json.dumps(donnees, indent=2))
     except requests.exceptions.RequestException as e:
         print("Serveur injoignable :", e)
     except Exception as e:
