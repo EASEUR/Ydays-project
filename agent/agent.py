@@ -2,7 +2,9 @@ import socket
 import time
 import json
 import psutil
+import requests
 
+URL_SERVEUR = "http://127.0.0.1:8000/mesures"
 
 def top_processus(n=10):
     # first pass: initialize cpu measurement
@@ -54,8 +56,11 @@ def collecter():
 # run the monitoring loop
 while True:
     try:
-        print(collecter())
+        donnees = collecter()
+        reponse = requests.post(URL_SERVEUR, json=donnees, timeout=5)
+        print("Envoi :", reponse.status_code)
+    except requests.exceptions.RequestException as e:
+        print("Serveur injoignable :", e)
     except Exception as e:
-        print(json.dumps(collecter(), indent=2))
-
+        print("Erreur de collecte :", e)
     time.sleep(10)
